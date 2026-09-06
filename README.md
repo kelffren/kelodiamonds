@@ -1,0 +1,2 @@
+# kelodiamonds
+resguardo del proyecto
