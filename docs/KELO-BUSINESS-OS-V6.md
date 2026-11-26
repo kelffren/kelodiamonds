@@ -5,7 +5,7 @@
 
 
 ## 0. Especificación funcional — cómo se usa KELO BUSINESS OS
-Esta sección es el mapa de lectura para una persona nueva y la especificación de pantallas y flujos. Los capítulos 1–82 conservan reglas detalladas, hipótesis y decisiones; consultar precedencia del capítulo 75. Todo lo descrito es producto objetivo, no software ya operativo. Los nombres de botones son propuestas de interfaz; traducir al inglés comercial. Las integraciones no disponibles deben mostrar estado pendiente y alternativa, nunca simular éxito.
+Esta sección es el mapa de lectura para una persona nueva y la especificación de pantallas y flujos. Los capítulos 1–94 conservan reglas detalladas, hipótesis y decisiones; consultar precedencia del capítulo 75. Todo lo descrito es producto objetivo, no software ya operativo. Los nombres de botones son propuestas de interfaz; traducir al inglés comercial. Las integraciones no disponibles deben mostrar estado pendiente y alternativa, nunca simular éxito.
 
 ### 0.1. Qué estamos construyendo
 Una plataforma comercial que combina tienda online, oficina de vendedor, administrador de publicidad, comunicaciones, mercado de oportunidades, formación, comunidad y administración empresarial. Kelo Diamonds es la primera marca y el fundador el primer vendedor. Un comprador puede comprar solo o recibir asistencia; un vendedor puede captar sus clientes, atender los de la empresa, colaborar, recuperar ventas y cobrar comisiones por ventas reales. La empresa controla catálogo, pagos, inventario, entrega, márgenes y reglas. Una identidad con roles permite cambiar de espacio sin crear cuentas duplicadas. No es una red de inversión ni un negocio de reclutamiento remunerado.
@@ -82,7 +82,7 @@ Primero auditar código existente y preservar tienda. Fundamentos transaccionale
 
 
 ### 0.7. Índice funcional vigente y precedencia
-La visión vigente comprende capítulos 0–82. Los capítulos posteriores amplían los anteriores; ante conflicto aplicar las decisiones explícitas de consolidación del capítulo 75, sin borrar antecedentes. KELO es una plataforma Learn–Earn–Grow: universidad abierta, empresa comercial móvil y red flexible de oportunidades, inspirada en DoorDash para ventas. No exige dedicación exclusiva ni compra de formación. Kelo Diamonds es primera operación y Seller Zero el fundador.
+La visión vigente comprende capítulos 0–94. Los capítulos 83–94 detallan controles, eventos y orquestación. Los capítulos posteriores amplían los anteriores; ante conflicto aplicar las decisiones explícitas de consolidación del capítulo 75, sin borrar antecedentes. KELO es una plataforma Learn–Earn–Grow: universidad abierta, empresa comercial móvil y red flexible de oportunidades, inspirada en DoorDash para ventas. No exige dedicación exclusiva ni compra de formación. Kelo Diamonds es primera operación y Seller Zero el fundador.
 | Dominio | Capítulos de referencia |
 |---|---|
 | Comercio, club, operaciones y growth | 4,16,18,19 |
@@ -559,3 +559,585 @@ Antes de cada liberación: migraciones reversibles o plan de recuperación, back
 
 ## 82. Registro de auditoría de continuidad
 - 2026-11-26 — Se revisó la guía vigente de 74 capítulos, se recuperó contexto disponible de la conversación y se amplió sección 0 con mapa de lectura actualizado. Se añadieron capítulos 75–82 para precedencia, contratos comerciales, recuperación de talento, currículo, docentes/becas/linaje, ejemplos económicos reconciliados y pruebas integrales. Se conservan capítulos históricos. Los detalles recuperados son propuestas y ejemplos, no nuevas autorizaciones de gasto. No se ha verificado cada mensaje histórico íntegro, ni código de aplicación, tarifas, permisos externos, legalidad o capacidad. Próxima tarea: convertir esta especificación en backlog verificable tras auditoría del repositorio de aplicación, sin duplicar módulos.
+
+## 83. Contrato de interacción y ciclo comercial continuo
+Especificación propuesta de UI, rutas y nombres de eventos; adaptar a rutas existentes tras auditoría, sin duplicar módulos. Cada control listado es requisito funcional, no evidencia de implementación. Escritorio: navegación izquierda, cabecera global con búsqueda, disponibilidad, avisos y perfil; centro trabajo, panel contextual derecho, barra inferior de ventanas minimizadas. Móvil: inicio, bandeja, oportunidades, aprender y más; acciones contextuales en hoja inferior, formularios largos a pantalla completa, llamada persistente donde OS permita. Botón Atrás/cerrar devuelve foco y conserva borrador; Escape cierra modal no crítico; confirmación explícita para gasto, publicación, cancelación, revocación, pago y cambios financieros. Cada acción tiene estados disponible/deshabilitado con motivo/carga/éxito/error/reintento; no cerrar formulario al fallar. Lecturas no equivalen a ventas. Accesibilidad teclado, lector, contraste y traducciones ES/EN.
+Eventos propuestos: envelope event_id, type, schema_version, occurred_at UTC, actor_id/role, tenant_id, entity_type/id, correlation_id, causation_id, idempotency_key, source, outcome, consent_ref cuando aplique, payload mínimo sin PII innecesaria. Eventos de intención UI separados de confirmación servidor/proveedor; no generar ingreso por clic. Transacciones críticas con outbox, consumidores idempotentes, reintentos y dead-letter; auditoría financiera inmutable mediante asientos compensatorios. No registrar texto sensible, tokens ni audio en telemetría. Los eventos de vista/filtro se agregan o muestrean según consentimiento y utilidad; no vigilancia. Cada fila indica evento principal; añadir error con código seguro y correlación, no duplicar por reintento. Rutas son propuestas, no URLs activas.
+
+## 84. Identidad, navegación y oficina
+
+### AUTH — Registro e identidad
+Ruta propuesta: `/auth`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| AUTH-01 Crear cuenta | centro formulario | abre registro email y términos | user_registered | activa identidad; no habilita ventas hasta elegibilidad |
+| AUTH-02 Verificar email | aviso superior | abre confirmación token; cierra aviso al verificar | email_verified | reduce fraude |
+| AUTH-03 Iniciar sesión | centro | valida credenciales y abre espacio autorizado | session_started | retoma actividad |
+| AUTH-04 Recuperar contraseña | debajo contraseña | abre formulario y envía enlace sin revelar existencia | reset_requested | recupera acceso |
+| AUTH-05 Cambiar espacio | avatar superior | abre selector roles autorizados; cierra al elegir | workspace_switched | evita cuentas duplicadas |
+| AUTH-06 Cerrar sesión | avatar | confirma y revoca sesión; vuelve login | session_ended | protege datos |
+
+### HOME — Daily Board
+Ruta propuesta: `/seller`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| HOME-01 Disponible | cabecera derecha | activa disponibilidad elegible; no acepta casos automáticamente | availability_changed | aumenta capacidad |
+| HOME-02 Abrir prioridad | tarjeta central | abre caso real en Workspace | task_opened | reduce demora |
+| HOME-03 Posponer | menú tarjeta | abre selector fecha y motivo | task_snoozed | ordena seguimiento |
+| HOME-04 Completar | pie tarea | valida resultado y retira de pendientes | task_completed | mide ejecución |
+| HOME-05 Periodo | sobre métricas | actualiza filtros y cifras conciliadas | report_filter_changed | identifica rentabilidad |
+
+### WORK — Workspace
+Ruta propuesta: `/seller/workspace`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| WORK-01 Añadir panel + | barra superior | abre selector Ads/Chat/CRM/Call/Catálogo/Propuestas; inserta panel | panel_added | reduce cambios de app |
+| WORK-02 Arrastrar / redimensionar | cabecera y borde panel | mueve y ajusta sin desmontar sesión | layout_changed | trabajo simultáneo |
+| WORK-03 Minimizar | cabecera panel | colapsa a barra inferior sin terminar llamada | panel_minimized | libera espacio |
+| WORK-04 Restaurar | barra inferior | reabre panel y estado | panel_restored | continúa conversación |
+| WORK-05 Cerrar × | cabecera panel | cierra vista; si borrador pregunta guardar/descartar; llamada exige finalizar explícito | panel_closed | evita pérdida |
+| WORK-06 Guardar preset | barra superior | abre nombre y guarda distribución por dispositivo | layout_saved | acelera rutina |
+| WORK-07 Sales / Ads / Calls / Recovery / Team / CEO | selector superior | carga distribución autorizada | preset_loaded | especializa jornada |
+| WORK-08 Buscar | cabecera global | abre resultados con permisos y navega al elegido | search_result_opened | localiza casos |
+| WORK-09 Campana | cabecera global | abre bandeja de avisos; clic abre entidad | notification_opened | reduce omisiones |
+
+### CONNECT — Conexiones
+Ruta propuesta: `/seller/connect`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| CONNECT-01 Conectar | tarjeta proveedor | abre OAuth/Embedded Signup oficial; vuelve con selección de activos | connection_requested | habilita captación |
+| CONNECT-02 Seleccionar activos | detalle conexión | abre páginas/cuentas autorizadas; guarda selección | assets_selected | separa cuentas |
+| CONNECT-03 Comprobar | tarjeta | consulta salud real y muestra permisos faltantes | connection_checked | evita fallos |
+| CONNECT-04 Reconectar | aviso error | abre autorización oficial | connection_restored | restablece canal |
+| CONNECT-05 Desconectar | menú tarjeta | confirma revocación y deshabilita envíos | connection_revoked | protege datos |
+
+## 85. Publicidad, captación y comunicaciones
+
+### ADS — Ads Express y Pro
+Ruta propuesta: `/seller/ads`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| ADS-01 Crear campaña + | arriba derecha | abre asistente producto→destino→creativo→audiencia→presupuesto/duración→revisión | campaign_draft_created | genera adquisición |
+| ADS-02 Siguiente / Atrás | pie asistente | valida paso y conserva borrador | campaign_step_saved | reduce errores |
+| ADS-03 Simular | paso presupuesto | abre cálculo costo/chat, cierre, comisión, break-even y supuestos | ad_simulation_run | protege capital |
+| ADS-04 Vista previa | revisión | abre anuncio por formato sin publicar | creative_previewed | control de marca |
+| ADS-05 Guardar borrador | pie | persiste y vuelve listado | campaign_draft_saved | evita gasto prematuro |
+| ADS-06 Autorizar y publicar | revisión | confirma pagador, monto y duración; envía API; muestra pendiente hasta confirmación | campaign_publish_requested / campaign_published | adquiere leads |
+| ADS-07 Pausar / Reactivar | fila campaña | confirma cambio y consulta estado externo | campaign_state_changed | controla gasto |
+| ADS-08 Duplicar | menú fila | crea borrador nuevo sin gasto | campaign_duplicated | reutiliza aprendizaje |
+| ADS-09 Editar presupuesto | detalle | abre importe y cap; confirma antes API | budget_change_requested | optimiza inversión |
+| ADS-10 Parada emergencia | cabecera autorizada | confirma alcance y solicita pausa; reporta fallos parciales | emergency_pause_requested | limita pérdidas |
+
+### RADAR — Profit Radar
+Ruta propuesta: `/seller/ads/profit`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| RADAR-01 Comparar | sobre tabla | selecciona campañas y abre gasto/chat/ventas/CAC/contribución | campaign_comparison_viewed | elige rentabilidad real |
+| RADAR-02 Ver atribución | fila venta | abre evidencia de origen o desconocido | attribution_inspected | detecta fuga |
+| RADAR-03 Aplicar recomendación | tarjeta Smart Campaign | abre simulación y confirmación; nunca ejecuta gasto sin permiso | recommendation_reviewed | mejora ROAS neto |
+
+### VAULT — Creative Vault y Social
+Ruta propuesta: `/seller/creatives`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| VAULT-01 Subir | arriba | abre archivo, derechos, SKU y formato; envía moderación | creative_submitted | crea material reutilizable |
+| VAULT-02 Usar creativo | tarjeta aprobada | abre Ads con activo seleccionado | creative_selected | reduce tiempo |
+| VAULT-03 Programar publicación | editor | abre calendario/canal/preview y autorización | social_post_scheduled | captación orgánica |
+| VAULT-04 Responder comentario | fila autorizada | abre editor y envío oficial | comment_reply_sent | convierte interés |
+
+### INBOX — Bandeja unificada
+Ruta propuesta: `/seller/inbox`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| INBOX-01 Filtros | columna izquierda | filtra canal/no leído/pendiente/asignado | inbox_filter_changed | prioriza respuesta |
+| INBOX-02 Abrir chat | fila izquierda | abre historial central y ficha CRM derecha | thread_opened | continúa venta |
+| INBOX-03 Enviar | pie chat | valida canal, consentimiento, ventana y texto; muestra enviado/error real | message_send_requested / message_sent | resuelve dudas |
+| INBOX-04 Adjuntar producto | icono junto editor | abre catálogo lateral; seleccionar inserta ficha verificable | product_shared | facilita decisión |
+| INBOX-05 Respuesta rápida | junto editor | abre plantillas; inserta editable | template_selected | reduce demora |
+| INBOX-06 Marcar pendiente | cabecera chat | abre fecha/motivo y crea tarea | followup_scheduled | recupera interés |
+| INBOX-07 Asignar | cabecera | abre elegibles y confirma transferencia | thread_assigned | distribuye capacidad |
+| INBOX-08 No contactar | menú chat | confirma exclusión global inmediata y cancela seguimientos | contact_opted_out | protege confianza |
+| INBOX-09 Sugerir IA | panel derecho | genera borrador con fuentes; no envía | ai_suggestion_created | mejora respuesta |
+| INBOX-10 Usar / Editar / Descartar | tarjeta IA | inserta texto editable o cierra tarjeta | ai_suggestion_reviewed | aprende utilidad |
+| INBOX-11 Tomar control | cabecera | detiene respuestas automáticas y asigna humano | human_handoff_started | evita mensajes dobles |
+| INBOX-12 Devolver a IA | cabecera | confirma elegibilidad y activa recepcionista | human_handoff_ended | libera capacidad |
+
+## 86. CRM, llamadas y propuestas
+
+### CRM — CRM
+Ruta propuesta: `/seller/crm`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| CRM-01 Nuevo lead | arriba | abre formulario origen/contacto/consentimiento; deduplica | lead_created | crea oportunidad trazable |
+| CRM-02 Abrir ficha | fila | abre historial, pedidos, objeciones y tareas | customer_record_opened | personaliza atención |
+| CRM-03 Nueva oportunidad | ficha | elige producto, origen y responsable | opportunity_created | mide embudo |
+| CRM-04 Cambiar etapa | cabecera ficha | abre estados permitidos y motivo; no permite marcar pagado manualmente | opportunity_stage_changed | mide conversión |
+| CRM-05 Registrar objeción | panel derecho | abre categoría y evidencia | objection_logged | alimenta Recovery y Academy |
+| CRM-06 Añadir nota | timeline | abre editor privado con permisos | note_added | conserva contexto |
+| CRM-07 Agendar | panel acciones | abre calendario y consentimiento | appointment_scheduled | crea siguiente paso |
+| CRM-08 Cerrar como perdida | menú | exige motivo y elegibilidad; envía análisis | opportunity_lost | recupera valor |
+
+### CALL — Direct Call / Smart Calling
+Ruta propuesta: `/seller/calls`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| CALL-01 Invitar a llamada | chat/CRM | abre modal voz/video, expiración y canal; crea token privado | call_invite_created | reduce fricción |
+| CALL-02 Copiar / Enviar | modal invitación | copia enlace o envía canal autorizado; cierra al confirmar | call_invite_shared | convierte chat en llamada |
+| CALL-03 Llamar | ficha prospecto | abre selector WhatsApp autorizado/WebRTC/PSTN elegible y costo | call_requested | contacto legal |
+| CALL-04 Admitir | sala espera vendedor | acepta participante verificado | participant_admitted | inicia asesoría |
+| CALL-05 Micrófono / Cámara | barra inferior | activa/desactiva pista propia con permiso | media_state_changed | control usuario |
+| CALL-06 Solicitar grabación | barra llamada | abre aviso a todos; inicia solo tras consentimientos | recording_consent_requested / recording_started | habilita formación |
+| CALL-07 Detener grabación | indicador superior | detiene captura/análisis y registra revocación si procede | recording_stopped | protege privacidad |
+| CALL-08 Compartir producto | panel catálogo derecho | sincroniza ficha en pantalla cliente sin control remoto | product_presented | demuestra valor |
+| CALL-09 Comparar | catálogo | abre dos o más fichas verificadas | product_comparison_presented | resuelve objeciones |
+| CALL-10 Transferir / Pedir ayuda | menú llamada | abre elegibles, consentimiento y reparto si aplica | call_transfer_requested | aprovecha especialidad |
+| CALL-11 Finalizar | barra inferior rojo | termina sesión, abre disposición y Ghost al cliente | call_ended | mide resultado |
+| CALL-12 Registrar resultado | modal posterior | selecciona venta/cita/reserva/objeción/sin respuesta y tarea | call_disposition_saved | activa siguiente etapa |
+
+### PROP — Proposal Engine
+Ruta propuesta: `/seller/proposals`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| PROP-01 Generar propuesta | CRM/chat/llamada derecha | abre borrador con necesidades y catálogo; IA opcional | proposal_draft_created | personaliza oferta |
+| PROP-02 Añadir producto | editor | abre selector SKU/variante/cantidad | proposal_item_added | configura compra |
+| PROP-03 Editar condiciones | editor | abre descuento autorizado, entrega, reserva y vencimiento; recalcula servidor | proposal_terms_changed | protege margen |
+| PROP-04 Generar video | pestaña activos | abre Express/Personalizado/Cinemático y costo; encola | video_render_requested | mejora demostración |
+| PROP-05 Vista previa | cabecera | abre página cliente sin publicar | proposal_previewed | control calidad |
+| PROP-06 Aprobar y generar enlace | arriba derecha | valida precio/stock/permiso; congela versión y crea token | proposal_approved | acorta cierre |
+| PROP-07 Compartir | modal enlace | copia/envía autorizado; no autoenvía | proposal_sent | lleva a checkout |
+| PROP-08 Nueva versión | detalle publicado | clona borrador; no altera versión aceptada | proposal_version_created | negocia trazable |
+| PROP-09 Revocar | menú | confirma invalidación de enlace sin borrar contrato | proposal_revoked | evita oferta obsoleta |
+
+### ROOM — Sala digital comprador
+Ruta propuesta: `/p/:token`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| ROOM-01 Ver video / documentos | centro | abre reproductor o documento autorizado | proposal_asset_viewed | resuelve dudas |
+| ROOM-02 Preguntar / Agendar | junto asesor | abre chat o calendario | proposal_question_sent / appointment_requested | mantiene diálogo |
+| ROOM-03 Aceptar términos / Firmar | bloque condiciones | abre versión y consentimiento; firma si disponible | proposal_terms_accepted | formaliza acuerdo |
+| ROOM-04 Reservar | CTA junto precio | abre condiciones, depósito y saldo; Stripe Checkout | reservation_checkout_started | reduce fricción |
+| ROOM-05 Comprar completo | CTA principal | abre checkout total validado | checkout_started | cierra venta |
+| ROOM-06 Pagar saldo | panel progreso | abre checkout por saldo real | balance_checkout_started | completa compromiso |
+| ROOM-07 Cancelar reserva | detalle reserva | abre condiciones y solicitud; confirma ajuste según política | reservation_cancel_requested | protege confianza |
+
+## 87. Marketplaces, atribución y ventas colaborativas
+
+### MARKET — Closers Marketplace
+Ruta propuesta: `/seller/marketplace`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| MARKET-01 Filtrar / Ordenar | barra superior | abre producto, comisión, dificultad, antigüedad y compatibilidad | market_filter_changed | encuentra caso adecuado |
+| MARKET-02 Ver detalles | tarjeta anónima | abre términos sin PII | opportunity_viewed | decisión informada |
+| MARKET-03 Aceptar | pie tarjeta | confirma acuerdo, capacidad y claim atómico; abre CRM/chat si gana | opportunity_claimed | asigna venta |
+| MARKET-04 Liberar | ficha activa | abre motivo y confirma devolución según reglas | opportunity_released | evita desperdicio |
+| MARKET-05 Transferir | ficha | abre receptor autorizado y aceptación | transfer_requested | continúa atención |
+
+### EXCHANGE — Opportunity Exchange
+Ruta propuesta: `/seller/exchange`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| EXCHANGE-01 Publicar oportunidad | CRM o arriba | abre comisión total, cedida/retenida, motivo y plazo | exchange_offer_created | monetiza caso no atendido |
+| EXCHANGE-02 Contraofertar | tarjeta | abre importe dentro del cap; no modifica acuerdo vigente | counteroffer_submitted | equilibra incentivos |
+| EXCHANGE-03 Aceptar oferta | tarjeta | bloquea reparto y claim en transacción | exchange_agreement_locked | recupera adquisición |
+| EXCHANGE-04 Auto Exchange | ajustes | abre reglas, límites, simulación y autorización | auto_exchange_rule_enabled | reduce saturación |
+| EXCHANGE-05 Retirar oferta | propias | cierra oferta no aceptada | exchange_offer_withdrawn | protege titularidad |
+
+### REC — Recovery y Completion
+Ruta propuesta: `/seller/recovery`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| REC-01 Ver briefing | tarjeta elegible | abre motivo, historial autorizado, saldo y estrategia | recovery_brief_opened | reduce repetición |
+| REC-02 Aceptar recuperación | pie | claim y comisión versionada; abre CRM | recovery_claimed | rescata venta |
+| REC-03 Proponer alternativa | ficha | abre catálogo/precio permitido | recovery_offer_created | resuelve barrera |
+| REC-04 Delegar saldo | reserva pendiente | abre Exchange con atribución original | completion_delegated | completa compra |
+| REC-05 Archivar | ficha | exige motivo y bloquea contacto si exclusión | recovery_archived | evita insistencia |
+
+### OUT — Outbound y High Ticket
+Ruta propuesta: `/seller/prospects`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| OUT-01 Importar | arriba autorizado | abre fuente, archivo y validación de elegibilidad/dedupe | prospects_imported | amplía captación |
+| OUT-02 Aceptar prospecto | fila | claim exclusivo y abre ficha | prospect_claimed | inicia prospección |
+| OUT-03 Ver oferta | catálogo high ticket | abre proveedor, requisitos, comisión y evidencia | vendor_offer_viewed | selecciona producto |
+| OUT-04 Cualificar / Agendar | ficha | registra necesidad y cita autorizada | prospect_qualified / appointment_scheduled | prepara cierre |
+
+### GROUP — Grupos
+Ruta propuesta: `/seller/groups`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| GROUP-01 Crear grupo | arriba | abre nombre y descripción | group_created | forma equipo |
+| GROUP-02 Invitar | miembros | abre búsqueda y envía invitación | group_invite_sent | combina habilidades |
+| GROUP-03 Aceptar invitación | notificación | abre términos y añade miembro | group_member_joined | colabora |
+| GROUP-04 Añadir trato | grupo | abre oportunidades autorizadas | group_deal_added | comparte trabajo |
+| GROUP-05 Repartir igual / Personalizar | trato | abre centavos/porcentajes y cap | split_proposed | alinea remuneración |
+| GROUP-06 Aceptar reparto | trato | registra consentimiento; bloquea al aceptar todos | split_locked | evita disputa |
+| GROUP-07 Asignar tarea | trato | abre responsable y plazo | deal_task_assigned | coordina cierre |
+| GROUP-08 Salir | ajustes | confirma salida sin borrar derechos | group_member_left | mantiene autonomía |
+
+### SHOP — Mini tienda
+Ruta propuesta: `/seller/store`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| SHOP-01 Editar perfil | cabecera | abre alias, bio y activos aprobados | store_profile_saved | construye confianza |
+| SHOP-02 Añadir producto | rejilla | abre catálogo permitido por nivel | store_product_added | amplía venta |
+| SHOP-03 Vista previa / Publicar | arriba | abre preview y revisión; publica versión aprobada | store_version_published | captación propia |
+| SHOP-04 Copiar enlace / QR / Código | tarjeta | genera referencia servidor y muestra material | referral_link_created | atribuye compra |
+| SHOP-05 Ver ventas | pestaña | abre pedidos atribuidos autorizados | store_sales_viewed | mide rendimiento |
+
+## 88. Comercio, fidelización y operaciones
+
+### PDP — Tienda pública
+Ruta propuesta: `/product/:slug`. Rol base: customer; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| PDP-01 Buscar | cabecera | abre resultados catálogo | product_search_performed | descubre producto |
+| PDP-02 Elegir variante | ficha | actualiza precio/stock real | variant_selected | reduce incertidumbre |
+| PDP-03 Añadir carrito | CTA | valida variante y abre carrito lateral | cart_item_added | inicia compra |
+| PDP-04 Hablar con asesor | junto CTA | abre disponibilidad/cola/chat | advisor_requested | rescata dudas |
+| PDP-05 Guardar | icono corazón | añade wishlist con cuenta o local permitido | wishlist_item_added | facilita retorno |
+
+### CHECK — Carrito y checkout
+Ruta propuesta: `/checkout`. Rol base: customer; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| CHECK-01 Cantidad +/− / Eliminar | fila carrito | recalcula servidor y actualiza total | cart_updated | reduce errores |
+| CHECK-02 Aplicar código | resumen | valida promoción y margen | promotion_applied | incentivo medible |
+| CHECK-03 Continuar como invitado | pie | abre datos entrega y pago sin registro obligatorio | guest_checkout_started | reduce abandono |
+| CHECK-04 Elegir entrega / COD | formulario | valida ZIP, tarifa, plazo y depósito | delivery_option_selected | ajusta conveniencia |
+| CHECK-05 Pagar | pie resumen | crea sesión Stripe con importe y atribución; redirige | checkout_started | cobra seguro |
+| CHECK-06 Reintentar | pantalla fallo | crea intento seguro sin duplicar pedido | payment_retry_requested | recupera pago |
+
+### CLUB — Private Club
+Ruta propuesta: `/account/club`. Rol base: customer; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| CLUB-01 Ver pedido / Tracking | tarjeta pedido | abre estado real y entrega | order_tracking_viewed | reduce incertidumbre |
+| CLUB-02 Garantía / Soporte | pedido | abre ticket con referencia | support_ticket_created | retiene cliente |
+| CLUB-03 Colección / Certificado | perfil | abre artículos comprados y evidencia auténtica | certificate_viewed | refuerza confianza |
+| CLUB-04 Usar crédito | checkout | valida saldo promocional y aplica una vez | reward_redeemed | estimula recompra |
+| CLUB-05 Invitar amigo | club | abre enlace y términos | customer_referral_created | adquisición orgánica |
+| CLUB-06 Style Lab | club | abre preguntas de preferencias y recomendaciones por reglas | style_preferences_saved | mejora relevancia |
+| CLUB-07 Votar / Avisarme | Discover | registra voto o waitlist consentida | product_vote_cast / waitlist_joined | valida demanda |
+
+### OPS — Inventario y pedidos (admin)
+Ruta propuesta: `/admin/operations`. Rol base: customer; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| OPS-01 Nuevo SKU / Editar | catálogo | abre ficha costo, precio, variante, activos y aprobación | sku_saved | habilita oferta |
+| OPS-02 Entrada / Ajuste stock | inventario | abre cantidad, motivo y proveedor; transacción | stock_movement_recorded | evita sobreventa |
+| OPS-03 Preparar / Asignar entrega | pedido | abre responsable, horario y ruta autorizada | delivery_assigned | cumple promesa |
+| OPS-04 Confirmar entrega | detalle | registra evidencia y costo; no altera pago | delivery_confirmed | habilita validación comisión |
+| OPS-05 Reembolsar | pedido | abre importe, motivo y revisión; solicita proveedor | refund_requested | protege cliente |
+| OPS-06 Resolver / Reabrir ticket | soporte | registra respuesta y estado | ticket_resolved / ticket_reopened | recupera confianza |
+
+## 89. Inteligencia, calidad y capital
+
+### GHOST — Ghost Feedback (comprador)
+Ruta propuesta: `/feedback/:token`. Rol base: admin; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| GHOST-01 Estrellas 1–5 | centro posllamada | selecciona valoración; abre motivos opcionales | feedback_rating_selected | mide experiencia |
+| GHOST-02 Motivos / Comentario | debajo | selecciona chips o texto opcional | feedback_draft_updated | identifica brecha |
+| GHOST-03 Enviar | pie | valida token único; agradece y cierra | feedback_submitted | alimenta calidad |
+| GHOST-04 Omitir | pie secundario | cierra sin penalizar | feedback_skipped | respeta elección |
+
+### QUALITY — Ghost Dashboard y Recording Center
+Ruta propuesta: `/admin/quality`. Rol base: admin; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| QUALITY-01 Filtrar | cabecera | periodo, cohorte, muestra, motivos | quality_filter_changed | detecta patrón |
+| QUALITY-02 Abrir evaluación | fila admin | abre respuesta privada y contexto autorizado | private_feedback_accessed | diagnóstico |
+| QUALITY-03 Reproducir | sesión autorizada | abre audio/video y timeline; URL temporal | recording_accessed | revisa evidencia |
+| QUALITY-04 Ir a marca | timeline | salta a segmento consentido | recording_segment_opened | reduce revisión |
+| QUALITY-05 Eliminar según política | menú | confirma retención y permisos; audita | recording_deletion_requested | minimiza datos |
+
+### FIRE — Performance Firewall
+Ruta propuesta: `/admin/firewall`. Rol base: admin; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| FIRE-01 Ver desviación | tarjeta vendedor | abre real/esperado, muestra, causas externas y evidencia | performance_case_opened | detecta pérdidas |
+| FIRE-02 Generar diagnóstico | panel | IA propone brechas con incertidumbre y fuentes | diagnosis_drafted | personaliza mejora |
+| FIRE-03 Aprobar / Corregir plan | revisión humana | abre edición de habilidades, ejercicios y objetivos | learning_plan_assigned | corrige habilidad |
+| FIRE-04 Solicitar revisión | vista vendedor | abre alegación y evidencia | performance_review_requested | evita error |
+| FIRE-05 Evaluar transferencia | caso | abre resultados comparables y prueba real | transfer_assessment_recorded | verifica mejora |
+
+### DNA — Commercial DNA
+Ruta propuesta: `/seller/performance`. Rol base: admin; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| DNA-01 Ver habilidad | radar | abre muestra, rúbrica y tendencia propia | skill_evidence_viewed | identifica fortaleza |
+| DNA-02 Practicar | tarjeta brecha | abre microlección/Gym | practice_assigned_opened | mejora cierre |
+| DNA-03 Solicitar revisión | detalle | abre corrección con evidencia | dna_review_requested | mejora datos |
+
+### CAP — Capital Allocation
+Ruta propuesta: `/admin/capital`. Rol base: admin; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| CAP-01 Simular inversión | arriba | abre oportunidades, conversión, margen, ROI, liquidez | capital_simulation_run | protege capital |
+| CAP-02 Asignar / Reducir | fila vendedor | abre monto, motivo, evidencia y revisión humana | funding_decision_recorded | redistribuye recursos |
+| CAP-03 Aprobar escalón | caso recuperación | valida dominio, prueba y presupuesto | funding_stage_approved | reincorpora talento |
+| CAP-04 Ver costo | fila | abre ads, IA, media, formación y contribución | seller_cost_viewed | evita pérdidas |
+| CAP-05 Configurar fondo | cabecera | abre porcentajes y reserva; suma 100% | capital_policy_versioned | financia experimentos |
+
+### SECOND — Seller Recovery / Second Chance
+Ruta propuesta: `/seller/recovery-plan`. Rol base: admin; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| SECOND-01 Ver plan | inicio | abre objetivos y recursos gratuitos | recovery_plan_opened | acorta recuperación |
+| SECOND-02 Practicar gratis | plan | abre Academy/Gym básico | free_training_started | mantiene acceso |
+| SECOND-03 Contratar formación adicional | solo elegible | abre precio, condiciones y cancelación; consentimiento explícito | education_subscription_started | financia apoyo voluntario |
+| SECOND-04 Cancelar suscripción | ajustes | confirma fin de renovación y fecha | education_subscription_cancelled | evita cobro indebido |
+| SECOND-05 Solicitar beca | plan | abre expediente | scholarship_application_started | ofrece alternativa |
+| SECOND-06 Solicitar recalificación | plan | abre evidencia y revisión | requalification_requested | restaura financiación |
+
+## 90. Universidad, profesores y mentoría
+
+### LIB — Open Academy
+Ruta propuesta: `/academy/:lang`. Rol base: student; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| LIB-01 Buscar / Filtrar | cabecera | abre cursos por materia/nivel/idioma | course_search_performed | atrae aprendizaje orgánico |
+| LIB-02 Leer lección | ficha | abre contenido público sin login | lesson_opened | crea confianza |
+| LIB-03 Practicar | pie lección | abre ejercicio gratuito | practice_started | desarrolla habilidad |
+| LIB-04 Guardar progreso | aviso | abre registro opcional para sincronizar | learning_account_linked | retiene alumno |
+
+### PRACT — Practice y Mastery
+Ruta propuesta: `/learn/practice`. Rol base: student; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| PRACT-01 Elegir materia | cabecera | abre árbol habilidades | subject_selected | personaliza currículo |
+| PRACT-02 Comenzar / Continuar | tarjeta habilidad | abre sesión de ejercicios | practice_session_started | reduce brecha |
+| PRACT-03 Comprobar | pie ejercicio | evalúa respuesta/rúbrica; muestra explicación | exercise_attempted | mide dominio |
+| PRACT-04 Siguiente | pie feedback | abre siguiente ejercicio sin duplicar intento | exercise_advanced | mantiene progreso |
+| PRACT-05 Repasar errores | inicio | abre variantes de errores vencidos | review_session_started | mejora retención |
+| PRACT-06 Escuchar / Grabar respuesta | ejercicio voz | reproduce audio o pide micrófono; alternativa texto | voice_practice_requested | practica comunicación |
+| PRACT-07 Terminar sesión | resumen | guarda progreso y próxima revisión | practice_session_completed / review_scheduled | consolida aprendizaje |
+| PRACT-08 Evaluar dominio | habilidad | abre casos nuevos sin pistas | mastery_assessment_started | verifica transferencia |
+| PRACT-09 Ver certificado | perfil | abre credencial verificable si aprobada | credential_viewed | habilita oportunidades elegibles |
+
+### GYM — Sales Gym
+Ruta propuesta: `/learn/gym`. Rol base: student; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| GYM-01 Configurar simulación | inicio | abre producto, idioma, dificultad, objeción y canal | simulation_configured | entrena casos reales |
+| GYM-02 Iniciar | pie | abre cliente explícitamente virtual | simulation_started | práctica segura |
+| GYM-03 Responder | chat/voz | registra respuesta y reacción simulada | simulation_turn_completed | mide habilidad |
+| GYM-04 Finalizar y evaluar | cabecera | abre rúbrica, evidencia y alternativa | simulation_assessed | corrige técnica |
+| GYM-05 Repetir variante | resultado | abre nuevo escenario | simulation_restarted | prueba transferencia |
+
+### TEACH — Course Studio (instructor)
+Ruta propuesta: `/teacher/studio`. Rol base: student; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| TEACH-01 Solicitar certificación | perfil | abre expediente y clase prueba | teacher_certification_requested | descubre expertos |
+| TEACH-02 Crear curso | arriba | abre editor objetivos, lecciones, rúbricas, precio | course_draft_created | crea activo educativo |
+| TEACH-03 Enviar moderación | editor | congela versión para revisión | course_submitted | controla calidad |
+| TEACH-04 Aprobar / Devolver | admin | abre motivos y decisión humana | course_review_decided | protege alumnos |
+| TEACH-05 Publicar | versión aprobada | activa catálogo | course_published | monetiza conocimiento |
+| TEACH-06 Programar clase | calendario | abre fecha, capacidad, precio y modalidad | live_class_scheduled | ofrece apoyo |
+| TEACH-07 Ver resultados / Liquidaciones | panel | abre aprendizaje y ledger propio | teacher_results_viewed | mide valor |
+
+### CAMPUS — Teacher Marketplace y Live Campus
+Ruta propuesta: `/learn/campus`. Rol base: student; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| CAMPUS-01 Ver profesor | tarjeta | abre especialidad, muestra, precio y agenda | teacher_profile_viewed | elige ayuda |
+| CAMPUS-02 Inscribirme / Comprar | ficha | abre condiciones y checkout si opcional pago | education_enrollment_created | accede formación |
+| CAMPUS-03 Entrar clase | agenda | abre sala autorizada con permisos | live_class_joined | aprende en directo |
+| CAMPUS-04 Preguntar | sala | abre chat o turno moderado | class_question_submitted | resuelve dudas |
+| CAMPUS-05 Evaluar clase | fin | abre valoración educativa opcional | course_feedback_submitted | mejora docentes |
+
+### SCH — Becas
+Ruta propuesta: `/seller/scholarships`. Rol base: student; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| SCH-01 Nueva solicitud | arriba | abre expediente motivación/autoevaluación/examen/5 simulaciones/plan30d | scholarship_application_started | detecta compromiso |
+| SCH-02 Guardar borrador | pie | persiste y cierra sin enviar | scholarship_draft_saved | reduce abandono |
+| SCH-03 Enviar expediente | pie | valida checklist y abre confirmación | scholarship_submitted | inicia evaluación |
+| SCH-04 Solicitar corrección | comité | abre requisitos pertinentes y plazo | scholarship_revision_requested | mejora evidencia |
+| SCH-05 Conceder / Denegar | comité | abre cobertura, presupuesto, motivo y revisión humana | scholarship_decided | asigna apoyo |
+| SCH-06 Apelar / Renovar | detalle alumno | abre evidencia y revisión | scholarship_review_requested | mantiene oportunidad |
+
+### MENTOR — Legacy Mentorship
+Ruta propuesta: `/seller/mentorship`. Rol base: student; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| MENTOR-01 Buscar mentor | arriba | abre especialidad, idioma y plazas | mentor_search_performed | encuentra guía |
+| MENTOR-02 Solicitar / Invitar | perfil | abre objetivos y consentimiento bilateral | mentorship_requested | forma relación |
+| MENTOR-03 Aceptar / Rechazar | solicitudes | valida un mentor, tres alumnos y ausencia ciclos | mentorship_decided | controla capacidad |
+| MENTOR-04 Agendar sesión | dashboard | abre calendario y objetivo | mentorship_session_scheduled | apoya progreso |
+| MENTOR-05 Ver alumno | tarjeta | abre métricas autorizadas sin Ghost individual | mentee_progress_viewed | orienta ayuda |
+| MENTOR-06 Proponer graduación | detalle | abre evidencia y aceptación | graduation_requested | libera plaza tras revisión |
+| MENTOR-07 Finalizar relación | menú | confirma fin voluntario e historial | mentorship_ended | protege autonomía |
+| MENTOR-08 Ver linaje | perfil | abre árbol autorizado y agregados sin duplicar | lineage_viewed | reconoce legado |
+
+## 91. Comunidad, reputación y remuneración
+
+### COMM — Headquarters y comunidad
+Ruta propuesta: `/community`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| COMM-01 Entrar canal | barra izquierda | abre mensajes paginados | community_channel_joined | comparte conocimiento |
+| COMM-02 Enviar mensaje | pie | valida moderación y frecuencia | community_message_sent | colabora |
+| COMM-03 Crear sala / Entrar | cabecera | abre voz opcional y permisos | community_room_joined | trabajo conjunto |
+| COMM-04 Buscar equipo | pestaña | abre anuncios y filtros | team_search_performed | combina talento |
+| COMM-05 Pedir ayuda | trato o canal | abre solicitud sin PII; colaboración formal si reparto | help_requested | rescata cierre |
+| COMM-06 Publicar logro | feed | abre preview anonimizado y consentimiento | achievement_shared | motiva |
+| COMM-07 Reportar / Bloquear | menú mensaje/perfil | abre motivo o bloqueo inmediato | community_reported / user_blocked | protege comunidad |
+
+### LEG — Trofeos y perfil
+Ruta propuesta: `/seller/legacy`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| LEG-01 Ver trofeo | rejilla | abre certificado y estado verificable | achievement_viewed | reconoce venta |
+| LEG-02 Destacar | detalle | abre vitrina 3×3 máximo nueve | showcase_updated | construye reputación |
+| LEG-03 Compartir | detalle | abre preview sin PII y visibilidad | achievement_shared | atrae colaboración |
+| LEG-04 Buscar oportunidades similares | detalle | abre catálogo elegible sin datos comprador | related_opportunities_opened | repite éxito |
+| LEG-05 Editar privacidad | perfil | abre campos públicos y consentimiento | profile_visibility_changed | controla exposición |
+
+### EARN — Ingresos y misiones
+Ruta propuesta: `/seller/earnings`. Rol base: seller; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| EARN-01 Ver desglose | fila ledger | abre venta, acuerdo, estado y ajustes | commission_detail_viewed | genera confianza |
+| EARN-02 Exportar | cabecera | descarga registros autorizados | earnings_exported | facilita contabilidad |
+| EARN-03 Solicitar liquidación | saldo disponible si habilitado | abre importe y verificación; no promete pago inmediato | payout_requested | remunera trabajo |
+| EARN-04 Aceptar misión | tarjeta | abre entregables, plazo, remuneración y términos | mission_accepted | activa trabajo real |
+| EARN-05 Entregar evidencia | misión | abre archivo/referencia y revisión | mission_evidence_submitted | valida servicio |
+| EARN-06 Disputar | detalle | abre motivo y evidencia | commission_dispute_opened | resuelve conflicto |
+
+## 92. Dirección, crecimiento y control técnico
+
+### CEO — CEO Command Center y Finance
+Ruta propuesta: `/admin`. Rol base: admin; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| CEO-01 Periodo | cabecera | abre ciclo 20→20/fechas/zona NY | finance_period_changed | mide negocio |
+| CEO-02 Ver detalle | KPI | abre ledger y costos conciliados | finance_drilldown_opened | detecta fuga |
+| CEO-03 Simular meta | arriba | abre volumen, CAC, margen, gastos y caja | business_scenario_run | planifica crecimiento |
+| CEO-04 Exportar | cabecera | genera CSV autorizado | finance_exported | control contable |
+| CEO-05 Abrir alerta | CEO Inbox | navega a caso real | ceo_alert_opened | resuelve bloqueo |
+
+### LEDGER — Compensation Engine
+Ruta propuesta: `/admin/commissions`. Rol base: admin; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| LEDGER-01 Nueva regla | arriba | abre SKU/canal/rol/base/cap/vigencia | commission_rule_drafted | configura incentivos |
+| LEDGER-02 Simular margen | editor | calcula descuentos, costos y repartos | commission_simulation_run | protege contribución |
+| LEDGER-03 Aprobar versión | editor | publica regla futura sin alterar acuerdos | commission_rule_published | estabilidad |
+| LEDGER-04 Conciliar / Liquidar | tabla | abre evidencia y lote autorizado | payout_batch_approved | paga correctamente |
+| LEDGER-05 Ajustar | detalle | abre motivo y asiento compensatorio | ledger_adjustment_recorded | corrige sin borrar |
+
+### VEND — Vendor Network
+Ruta propuesta: `/admin/vendors`. Rol base: admin; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| VEND-01 Nuevo proveedor | arriba | abre verificación, contrato y territorio | vendor_created | amplía catálogo |
+| VEND-02 Publicar oferta | detalle | abre producto, comisión, requisitos y aprobación | vendor_offer_published | genera high ticket |
+| VEND-03 Validar cumplimiento | pedido proveedor | abre evidencia entrega/pago | vendor_fulfillment_verified | habilita liquidación |
+| VEND-04 Pausar oferta | menú | confirma motivo y bloquea nuevos claims | vendor_offer_paused | protege clientes |
+
+### GROW — Growth Engine
+Ruta propuesta: `/admin/growth`. Rol base: admin; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| GROW-01 Editar landing / Artículo | lista | abre editor versionado | content_draft_created | atrae tráfico |
+| GROW-02 Vista previa / Publicar | editor | abre preview y revisión; conserva URL | content_published | SEO y conversión |
+| GROW-03 Crear experimento | arriba | abre hipótesis, variantes, muestra, control y métrica | experiment_created | aprende incrementalmente |
+| GROW-04 Crear promoción | arriba | abre tipo, elegibilidad, límite y margen | promotion_drafted | estimula compra |
+| GROW-05 Crear waitlist | Market Lab | abre oferta honesta y consentimiento | waitlist_published | valida demanda |
+| GROW-06 Ver SEO | pestaña | abre cobertura, sitemap y errores reales | seo_report_viewed | mejora descubrimiento |
+
+### AUTO — Autopilot
+Ruta propuesta: `/admin/autopilot`. Rol base: admin; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| AUTO-01 Nueva regla | arriba | abre evento→condición→acción→límites | automation_drafted | reduce trabajo repetitivo |
+| AUTO-02 Simular | editor | ejecuta sobre datos prueba sin efectos | automation_simulated | previene errores |
+| AUTO-03 Activar | editor | valida permisos, consentimiento, presupuesto y bucles | automation_enabled | automatiza siguiente acción |
+| AUTO-04 Pausar | fila | deshabilita futuras ejecuciones | automation_paused | controla riesgo |
+| AUTO-05 Ver ejecución / Reintentar | historial | abre error; reintento idempotente autorizado | automation_retry_requested | recupera proceso |
+
+### HEALTH — Resource Governor, seguridad y auditoría
+Ruta propuesta: `/admin/system`. Rol base: admin; excepciones explícitas en nombre/control y permisos de capítulos anteriores. Acceso por navegación contextual y enlace interno autorizado. Datos reales o estado vacío; ninguna acción financiera por mero clic.
+
+| ID / Control | Ubicación | Interacción y resultado | Evento | Aporte al ciclo |
+|---|---|---|---|---|
+| HEALTH-01 Ver integración | tarjeta | abre estado, colas, latencia y errores | integration_health_viewed | evita interrupción |
+| HEALTH-02 Configurar cuota | panel costos | abre límite por módulo/sesión y alertas | resource_policy_saved | protege margen |
+| HEALTH-03 Activar fallback | incidente | confirma modo manual sin bloquear pagos | fallback_enabled | continúa ventas |
+| HEALTH-04 Gestionar roles | seguridad | abre permisos y MFA; audita cambios | role_permissions_changed | protege datos |
+| HEALTH-05 Ver auditoría | tabla | filtra actor, entidad, acción y fecha | audit_log_viewed | detecta fraude |
+| HEALTH-06 Restaurar backup | solo autorizado | abre plan de recuperación y confirmación reforzada; no sobrescribe producción sin autorización | restore_requested | protege continuidad |
+
+## 93. Orquestación del ciclo infinito de ventas — reglas y medición
+No significa contactar indefinidamente ni garantizar ventas. El ciclo termina para un cliente que rechaza contacto; continúa a nivel de negocio con nueva demanda legítima. Cada automatización requiere permiso, elegibilidad, presupuesto, idempotencia y trazabilidad. 
+| Evento confirmado | Condición | Acción siguiente | Indicador |
+|---|---|---|---|
+| campaign_published | cuenta autorizada | sincronizar gasto y campaña | gasto real |
+| message_received | contacto permitido | deduplicar, CRM, recepcionista o humano | costo conversación confirmada |
+| lead_qualified | intención y datos suficientes | privado o marketplace según origen | tasa cualificación |
+| opportunity_claimed | titular único | temporizador y tarea primera respuesta | SLA |
+| opportunity_released | elegible | devolver a cola o Recovery | oportunidades desperdiciadas |
+| call_ended | consentimiento aplicable | disposición, Ghost opcional, análisis autorizado | costo y conversión por llamada |
+| proposal_approved | versión válida | enlace y seguimiento permitido | tiempo propuesta |
+| reservation_paid | webhook firmado | asignar anticipo, reservar stock, tarea saldo | reserva→compra |
+| payment_confirmed | importe y moneda conciliados | pedido, inventario, ledger pendiente | conversión pagada |
+| delivery_confirmed | reglas devengo satisfechas | validar comisión y trofeo, ofrecer Club | contribución neta |
+| refund_confirmed | pago original identificado | asiento compensatorio, stock si procede, trofeo y métricas | devoluciones |
+| opportunity_lost | contacto permitido | análisis y Recovery si margen | incremento vs control |
+| feedback_submitted | muestra suficiente | agregado Ghost y revisión Firewall | calidad |
+| performance_deviation_detected | cohorte comparable | diagnóstico y plan humano | brecha ajustada |
+| mastery_verified | transferencia demostrada | prueba comercial limitada | costo recuperación |
+| funding_stage_approved | ROI esperado y caja | presupuesto autorizado, no publicación automática | retorno capital |
+| customer_repeat_eligible | consentimiento y valor | sugerencia relevante o beneficio Club | recompra incremental |
+| contribution_reconciled | caja libre y presupuesto aprobado | propuesta reinversión | beneficio operativo |
+| contact_opted_out | siempre | cancelar seguimientos y excluir canales | cumplimiento |
+Cadena de correlación: campaign→lead→opportunity→claim/agreement→conversation/call→proposal_version→order/reservation→payment→delivery/refund→ledger→achievement/learning→capital. Identificadores separados, relaciones verificadas, no fusionar clientes por nombre. Compra autónoma puede omitir lead/call; origen desconocido se conserva como desconocido. Métricas: visitantes únicos, conversaciones confirmadas, oportunidades elegibles, ventas netas únicas, contribución por oportunidad, costo por etapa, recuperación incremental, recompra, tiempo a dominio, retorno capital. Denominadores por cohorte y periodo; no sumar ventas de etapas. Cada tarea automática muestra motivo, responsable, fecha, entidad, cancelar/posponer y resultado. 
+
+## 94. Aceptación y registro de cobertura
+Esta ampliación enumera 44 superficies y 267 controles/acciones con identificador estable propuesto. Para cada ID crear prueba happy path, permisos negativos, validación, error proveedor, persistencia, móvil, accesibilidad y evento correcto; para efectos financieros añadir concurrencia, reintento y conciliación. Cada pantalla debe tener navegación de regreso, estados vacíos, carga y error; cada modal debe tener cerrar/cancelar sin efectos salvo borrador explícito. Las acciones compuestas abren asistentes cuyos campos y reglas provienen de capítulos anteriores. No considerar esta matriz un diseño pixel-perfect ni inventario exhaustivo de controles secundarios del código aún no auditado. Completar estados y campos específicos de cada integración tras inspección del repositorio real, sin cambiar reglas de negocio silenciosamente.
+- 2026-11-26: añadida especificación de interacción 83–94, 44 superficies y 267 acciones, rutas propuestas, ubicación, efecto, eventos y vínculo económico; orquestación de ciclo continuo. Se preserva contenido previo. No código, despliegue, gasto ni pruebas reales.
