@@ -3,6 +3,83 @@
 **Estado:** especificación conceptual consolidada; no certifica implementación ni rentabilidad.  
 **Propósito:** fuente de verdad del proyecto para dirección, desarrollo y futuras sesiones de IA.
 
+
+## 0. Especificación funcional — cómo se usa KELO BUSINESS OS
+Esta sección es el mapa de lectura para una persona nueva y la especificación de pantallas y flujos. Los capítulos 1–49 conservan reglas detalladas, hipótesis y decisiones. Todo lo descrito es producto objetivo, no software ya operativo. Los nombres de botones son propuestas de interfaz; traducir al inglés comercial. Las integraciones no disponibles deben mostrar estado pendiente y alternativa, nunca simular éxito.
+
+### 0.1. Qué estamos construyendo
+Una plataforma comercial que combina tienda online, oficina de vendedor, administrador de publicidad, comunicaciones, mercado de oportunidades, formación, comunidad y administración empresarial. Kelo Diamonds es la primera marca y el fundador el primer vendedor. Un comprador puede comprar solo o recibir asistencia; un vendedor puede captar sus clientes, atender los de la empresa, colaborar, recuperar ventas y cobrar comisiones por ventas reales. La empresa controla catálogo, pagos, inventario, entrega, márgenes y reglas. Una identidad con roles permite cambiar de espacio sin crear cuentas duplicadas. No es una red de inversión ni un negocio de reclutamiento remunerado.
+
+### 0.2. Navegación y pantallas
+Menú vendedor: Inicio, Workspace, Conexiones, Anuncios, Bandeja, CRM, Llamadas, Propuestas, Marketplace, Exchange, Recovery, Reservas, Mi tienda, Grupos, Comunidad, Academia, Misiones, Trofeos, Perfil, Ingresos, Calendario y Ajustes. Búsqueda global y notificaciones con permisos. Menú CEO añade Finanzas, Catálogo, Inventario, Pedidos, Entregas, Proveedores, Vendedores, Comisiones, Club, Growth, Autopilot, Integraciones, Seguridad y Auditoría. Comprador: tienda pública, producto, carrito, checkout, consulta privada, sala de propuesta y cuenta Club. Afiliado: mini tienda, enlaces, materiales, métricas e ingresos; módulos adicionales según certificación. Proveedor externo autorizado: ofertas, disponibilidad, pedidos/contratos, evidencias y liquidaciones propias. Menú móvil compacto y paneles adaptables. No exponer módulos sin permiso.
+
+### 0.3. Funciones, pantallas y comportamiento
+Cada fila describe pantalla, controles, efecto y comprobación mínima. Reutilizar entidades y reglas de capítulos referenciados. En todas las acciones: validar permisos y datos en servidor, mostrar carga/error/confirmación, persistir cambios, auditar acciones sensibles y probar recarga, concurrencia y acceso indebido.
+
+| Módulo / pantalla | Funciones y controles | Resultado y aceptación |
+|---|---|---|
+| Registro e identidad (3,21) | Crear cuenta, verificar email, recuperar contraseña, iniciar sesión, cambiar rol autorizado, MFA admin | Perfil único, permisos efectivos, sesión revocable; usuario no accede a cuentas ajenas. |
+| Inicio vendedor (45–46) | Ver tareas, conversaciones pendientes, ventas, comisión, costo publicitario, agenda; abrir tarea | Navega al caso real, cifras conciliadas y fecha visible; sin datos muestra vacío. |
+| Workspace (46) | Añadir panel, arrastrar, redimensionar, minimizar, cerrar, guardar preset Sales/Ads/Calls/Recovery/Team/CEO | Conserva distribución y borradores; chat y campaña pueden coexistir; móvil usa pestañas. |
+| Connect (5,46) | Conectar Facebook/Instagram/Messenger/WhatsApp Business/Meta Ads/Stripe, seleccionar activos, comprobar, desconectar | OAuth o incorporación oficial, QR solo si admitido; mostrar permisos y estado real; revocar detiene acceso. |
+| Ads Express (5,46) | Elegir producto, destino, creativo, audiencia, presupuesto, duración; vista previa, guardar borrador, autorizar publicación | Crea campaña/conjunto/anuncio en cuenta autorizada; sin aprobación no gasta. |
+| Ads Pro (5) | Editar, duplicar, pausar, reactivar, cambiar presupuesto, filtrar por fecha y campaña | Sincroniza estado real, confirma gasto, registra errores y límites; no modifica cuenta ajena. |
+| Profit Radar (5,17) | Ver gasto, chats, costo/chat, ventas atribuidas, CAC, margen, comparar campañas | Une eventos permitidos con pedidos; desconocido se marca como tal; descuenta gasto una vez. |
+| Creative Vault / Social Manager (5) | Subir/seleccionar material aprobado, preparar publicación, programar, responder comentarios compatibles | Guarda versiones, permisos y estado de publicación; no usa contenido no autorizado. |
+| Bandeja unificada (7,46) | Filtrar WhatsApp/Instagram/Messenger, abrir chat, responder, adjuntar catálogo, marcar pendiente, asignar, buscar | Envía por API oficial dentro de reglas del canal, muestra entrega/error; conserva historial y opt-out. |
+| Copiloto y recepcionista IA (7) | Activar/desactivar, sugerir respuesta, aceptar/editar, solicitar humano, resumir | Usa precio/stock/FAQ verificados; handoff detiene auto respuestas, presupuesto y fallback manual. |
+| CRM (8) | Crear cliente/lead/oportunidad, registrar origen, producto, objeción, notas, estado, tarea y cita | Historial único con permisos, no fusiona por nombre, transición auditada, exclusión bloquea contacto. |
+| Catálogo vendedor (4,18) | Buscar SKU, variantes, stock, precio, comisión, fotos y certificados; compartir producto | Datos de servidor, sin prometer stock inexistente; activos autorizados. |
+| Enlace de pago (4,13) | Elegir SKU/cantidad, descuento permitido, cliente, entrega; generar enlace | Pedido y atribución vinculados; Stripe confirma mediante webhook, no por captura de pantalla. |
+| Direct Call (47–48) | Generar enlace kelodiamonds.com/call/..., copiar/enviar, aceptar invitado, silenciar, finalizar | Cliente entra sin instalar, permisos explícitos, enlace privado expirable, audio WebRTC y fallback. |
+| Smart Calling (29,47) | Elegir canal elegible, iniciar/recibir, transferir, registrar resultado, programar callback | WhatsApp cuando autorizado/compatible, WebRTC por invitación, VoIP legal como fallback; no eludir restricciones. |
+| Live Shopping (48) | Mostrar producto, comparar, compartir foto/video, cámara opcional, abrir propuesta y checkout | Cliente controla su pantalla; selección sincronizada, precio real y compra vinculada al asesor. |
+| Call Intelligence (29) | Solicitar consentimiento, grabar/transcribir si autorizado, ver resumen y sugerencias, corregir resultado | Sin consentimiento no procesa audio para análisis; acceso limitado y costos medidos. |
+| Outbound / prospectos (28) | Importar fuente autorizada, filtrar empresa/sector, aceptar prospecto, registrar llamada/cita/resultado | Deduplicación, elegibilidad de contacto, titular único; no campañas masivas no solicitadas. |
+| Propuestas (30) | Seleccionar producto, necesidades, argumentos y activos; generar borrador, editar, aprobar, compartir | Página privada premium versionada con precio/condiciones verificadas; no publicar borrador sin aprobación. |
+| Video Factory (30) | Elegir Express/Personalizado/Cinemático, previsualizar, aprobar | Plantillas y activos compartidos primero; trabajos asíncronos, presupuesto, fallback si falla. |
+| Digital Sales Room (30) | Cliente abre propuesta, consulta documentos, chat, agenda, firma si disponible, reserva o paga | Acceso privado, versión aceptada inmutable, seguimiento permitido, sin PII en URL. |
+| Dual Close (31) | Mostrar pago completo y reserva, elegir importe autorizado, aceptar condiciones, pagar saldo | Reserva acreditada al precio; no contar como venta final; vencimiento y devolución claros. |
+| Completion (31) | Ver reservas pendientes, saldo, fecha, contactar autorizado, delegar, cerrar | Una oportunidad y atribución conservadas; comisión no duplicada; no presionar ni ocultar términos. |
+| Marketplace / Closers (9) | Filtrar producto, comisión, dificultad, antigüedad; aceptar, liberar, transferir | Tarjeta anónima antes de claim; aceptación atómica, plazo respuesta y capacidad; solo responsable autorizado accede. |
+| Exchange (10,38) | Publicar oportunidad propia, elegir comisión cedida/retenida, contraofertar, aceptar, activar reglas | Acuerdo congelado; no venta de datos, reparto dentro de presupuesto; pago solo por venta/servicio válido. |
+| Recovery (11) | Ver perdidas elegibles, motivo, historial, comisión, aceptar, generar estrategia, cerrar o archivar | Excluye opt-out, distingue causas, no premia pérdida intencional; mide incremento real. |
+| Commercial DNA (12,34) | Ver radar de habilidades, evidencia, muestras, recomendaciones, solicitar revisión | Conductas observables, no diagnóstico; datos escasos muestran incertidumbre; asignación por elegibilidad y capacidad. |
+| Academy / Sales Gym (15) | Elegir curso, estudiar, practicar cliente simulado, examen, feedback, certificación | Guarda progreso y rúbrica; certificación interna habilita oportunidades aprobadas, no licencia pública. |
+| Mi tienda / afiliados (6) | Elegir productos autorizados, personalizar perfil, copiar enlace/QR/código, consultar ventas | Una plantilla dinámica, stock compartido, atribución servidor; sin cuotas ni compras obligatorias. |
+| Misiones (14) | Ver requisitos, remuneración, plazo, aceptar, entregar evidencia, reclamar revisión | Pago por servicio o venta real validada; presupuesto y contrato previo, no reclutamiento. |
+| Ingresos (13–14) | Ver pendiente/devengado/disponible/pagado/revertido, gastos propios, exportar, solicitar liquidación si habilitada | Ledger único en centavos, conciliación, plazos legales; no saldo bancario ni ingresos garantizados. |
+| Grupos (38) | Crear, invitar, aceptar, agregar trato, repartir igual/custom, aprobar, asignar tareas, salir | Acuerdo por trato congelado, suma exacta, titular único; salida no borra derechos previos. |
+| Comunidad (40) | Chat global/canales, buscar equipo, pedir ayuda, mentoría, publicar logro, reaccionar, bloquear/reportar | Moderación, privacidad, opt-in, canales segmentados; no datos de clientes ni spam. |
+| Legacy / perfil (41) | Ver ventas y cierre con denominador, inventario de trofeos, elegir hasta nueve, publicar, seguir, invitar | Certificado no transferible tras venta válida, rareza por comisión individual, reversión auditada, privacidad. |
+| Calendario / tareas (20) | Crear cita, entrega, seguimiento, recordatorio; completar/reprogramar | Respeta zona horaria, permisos y exclusión; alerta no duplica tarea. |
+| CEO Finanzas (17,42) | Filtrar ciclo 20→20, ver ingresos/caja/COGS/margen/gastos/beneficio, simular metas, exportar | Conciliación y fórmula maestra; no confundir caja, GMV y beneficio. |
+| CEO Vendedores (3,12,35) | Aprobar roles, revisar activación, formación, carga, rendimiento, disputas, suspender con revisión | Permisos y motivos auditados; no decisiones graves solo por IA. |
+| CEO Comisiones (13) | Crear regla versionada, simular margen, aprobar, conciliar, liquidar, ajustar devolución | No cambios retroactivos arbitrarios, no doble pago, suma dentro del presupuesto. |
+| CEO Catálogo/Inventario (18) | Crear/editar SKU, costo, precio, stock, compra proveedor, reservar, ajustar con motivo | Movimientos auditados, stock disponible=físico−reservado, concurrencia segura. |
+| CEO Pedidos/Entregas (4,18) | Confirmar pago, preparar, asignar, programar, entregar, devolver, reembolsar | Estados pago/entrega separados, evidencia y costo; webhook firmado y conciliación. |
+| Proveedores / High Ticket (28) | Alta y contrato, crear oferta, comisión, territorio, requisitos, validar venta/entrega, liquidar | Solo ofertas verificadas y legales, permisos por proveedor, no promesas de comisión no financiada. |
+| Soporte (18) | Crear ticket, asignar, responder, resolver, reabrir, tramitar garantía | Historial y SLA, datos privados, reembolso por flujo autorizado. |
+| Growth (19) | Editar landing, preview, publicar, artículos, SEO, experimentos, promociones, waitlist | Versiones y rollback, preservar URLs, medir contribución, no indexación garantizada ni reseñas falsas. |
+| Autopilot (20) | Elegir evento, condición, acción, simular, activar, pausar, ver ejecuciones | Idempotencia, permisos, topes, no bucles, no gasto/contacto sin autorización. |
+| Resource Governor / Health (35,42–43) | Ver costos, cuotas, latencia, colas, conectores, alertas, autorizar presupuesto | Límites efectivos, degradación segura, pagos no bloqueados por cuota IA, pruebas de carga. |
+| Tienda pública (4) | Explorar, buscar, elegir variante, añadir carrito, hablar con asesor, checkout invitado | Estética premium existente, stock/precio real, compra segura, no registro obligatorio. |
+| Club comprador (16) | Ver pedidos, tracking, garantías, colección, wishlist, créditos, nivel, soporte y referidos | Beneficios configurables, ledger promocional, consentimiento y reversión; no crédito convertible en efectivo. |
+
+### 0.4. Historias completas de uso
+**Jornada del fundador:** inicia sesión → conecta activos Meta autorizados → abre Ads y Bandeja lado a lado → crea anuncio en borrador y autoriza presupuesto → entra conversación real → CRM registra origen si disponible → responde con catálogo → envía enlace Direct Call oficial → cliente acepta → muestra producto → genera propuesta → cliente paga o reserva → Stripe confirma → inventario y entrega se actualizan → ledger calcula comisión → panel muestra contribución y costo/chat → al completarse venta se emite trofeo elegible. Si no compra, registra motivo y seguimiento permitido; Recovery solo si elegible.
+**Vendedor sin presupuesto:** se registra, verifica y forma → acepta oportunidad corporativa anónima → atiende dentro del plazo → genera enlace de pago → venta completada → comisión según acuerdo → liquidación. Si no puede atender, libera sin duplicar titularidad.
+**Captador con publicidad propia:** conecta su cuenta, autoriza campaña, recibe lead privado → si saturado publica Exchange con $40 totales, $35 closer y $5 captador → otro acepta → venta validada → ledger reparte $35/$5; si no vende no se devenga comisión de venta. 
+**Equipo:** crea grupo, invita, adjunta trato, acuerda $1,000 entre tres ($333.34/$333.33/$333.33), todos aceptan → colaboran con permisos → cierre → reparto y trofeos individuales; devolución genera ajuste.
+**Comprador autónomo:** entra tienda o mini tienda → elige producto → checkout invitado → pago → entrega → opcionalmente crea cuenta verificada para Club. Si solicita asesor, entra cola y vendedor acepta; si nadie disponible, chat asincrónico.
+**High ticket:** proveedor autorizado publica oferta → prospector cualifica empresa elegible → setter agenda → closer atiende llamada → propuesta personalizada y reserva → saldo/contrato/entrega según condiciones → proveedor verifica y paga → liquidación de participantes. No asumir que una reserva equivale a ingreso final.
+
+### 0.5. Qué debe ocurrir cuando algo falla
+Pago rechazado: mantener pedido pendiente y permitir reintento seguro. Webhook repetido: no duplicar venta/comisión. Stock agotado: impedir cobro incompatible y ofrecer alternativa. Meta desconectado: conservar historial autorizado y mostrar reconexión, no fingir envío. Cliente rechaza micrófono: chat. IA falla: vendedor sigue manualmente. Vendedor abandona oportunidad: liberar conforme a reglas y conservar origen. Cliente pide no contacto: bloqueo global inmediato. Devolución: ajustar ledger, stock, beneficio y trofeo. Permiso insuficiente: denegar en servidor. Presupuesto agotado: detener acciones costosas no esenciales y avisar. Ningún error debe borrar registros financieros.
+
+### 0.6. Orden y definición de terminado
+Primero auditar código existente y preservar tienda. Fundamentos transaccionales, Seller Zero Workspace y conectores; luego Direct Call/Live Shopping, propuestas y doble cierre; después red, Exchange/Recovery, comunidad, Legacy y optimización predictiva según datos. Una misión integrada con dependencias y flags; no exigir aprobaciones por cada módulo, sí ante gasto, riesgo irreversible o credenciales. Cada pantalla debe tener ruta, estados vacío/carga/error/éxito, acciones reales, permisos, persistencia, móvil, pruebas y documentación. No confundir prototipo con integración funcional. Meta, WhatsApp, telefonía, Stripe y proveedores requieren validación real. Escala objetivo 500k vendedores/1M compradores, no capacidad probada. Fórmula de beneficio y presupuestos en 42–43.
+
 ## 1. Visión y modelo empresarial
 Kelo Diamonds comercializa joyería propia y centraliza catálogo, inventario, cobros, garantías y logística. Una red de participantes capta, asesora, vende, delega y recupera clientes. La ventaja buscada es maximizar la contribución económica por cliente adquirido, no solo reducir el costo por conversación. Objetivo empresarial de referencia: $30,000 mensuales de beneficio operativo, sujeto a validación. El sistema podrá reutilizarse para otras marcas con aislamiento estricto de datos y finanzas. No es un programa de inversión ni una promesa de ingresos.
  
@@ -218,3 +295,5 @@ Datos: workspace_layouts, integration_connections, channel_threads, call_invites
 
 ## 49. Registro de continuidad
 - 2026-11-26 — Seller Zero, Workspace multiventana, Meta Connect/Ads Manager/bandeja unificada, WhatsApp First, Smart Calling, Direct Call en kelodiamonds.com y Live Shopping. Se preservan capítulos anteriores y ruta de automatización. Especificaciones conceptuales; no se han comprobado permisos actuales, elegibilidad, tarifas, stack ni capacidad multimedia. No se modifica código ni se conectan cuentas.
+
+- 2026-11-26 — Se añade sección 0 como especificación funcional de lectura inicial, navegación, controles, flujos y aceptación; conserva capítulos 1–49. No implementación.
