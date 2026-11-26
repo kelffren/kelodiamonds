@@ -339,3 +339,75 @@ Añadir navegación vendedor: Mi rendimiento → Plan de mejora → Academia →
 
 ## 60. Registro de continuidad
 - 2026-11-26 — Consolidación de grabaciones, inteligencia multimodal vendedor/cliente, paridad móvil, Ghost Feedback, Performance Firewall, capital y calificación, recuperación Second Chance, economía educativa, becas y linaje de mentoría gratuito. Se preservan capítulos anteriores. No se modifica código, no se contratan servicios ni se despliega. Pendientes validación técnica, económica, privacidad y legislación laboral/comercial.
+
+
+## 61. Mapa maestro de arquitectura y construcción
+Un ecosistema modular, no siete aplicaciones independientes. Capas funcionales:
+1. Dirección: CEO Command Center, Finance, Capital Allocation, Autopilot.
+2. Generación de ingresos: Kelo Diamonds, Meta Ads, mini tiendas, High Ticket, afiliados, checkout.
+3. Operaciones comerciales: Seller Workspace, CRM, Chat, Direct Call, Proposal Engine, Opportunity Exchange, Recovery.
+4. Inteligencia: Commercial DNA, Customer DNA, Multimodal AI, Ghost Feedback, Performance Firewall, Match.
+5. Desarrollo profesional: Adaptive Academy, Sales Gym, Second Chance, Scholarships, Teacher Marketplace, Live Campus.
+6. Comunidad y prestigio: Legacy Mentorship, linajes, grupos, Guilds, trofeos, rankings y perfiles.
+7. Infraestructura transversal: identidad, permisos, datos, Stripe, APIs, eventos, Resource Governor, seguridad, observabilidad.
+Las capas son dominios funcionales, no necesariamente servicios separados. Un único núcleo compartido; separar servicios únicamente por necesidades demostradas de carga, aislamiento o seguridad.
+
+```mermaid
+graph TD
+ A[KELO CORE] --> B[Comercio y pagos]
+ A --> C[Identidad y permisos]
+ A --> D[Eventos y datos]
+ B --> E[Seller Workspace]
+ C --> E
+ E --> F[Ads y comunicaciones]
+ F --> G[CRM y oportunidades]
+ G --> H[Marketplace y comisiones]
+ G --> I[Inteligencia comercial]
+ D --> I
+ H --> J[Capital Allocation]
+ I --> J
+ I --> K[Performance Firewall]
+ K --> L[KELO University]
+ L --> M[Profesores y becas]
+ L --> N[Legacy Mentorship]
+ N --> O[Comunidad y trofeos]
+ M --> P[Recuperación del vendedor]
+ P --> J
+ J --> F
+```
+
+## 62. Roadmap económico — construcción autofinanciada
+Presupuesto objetivo ilustrativo de desembolso con IA, reutilización y trabajo propio; no cotización ni compromiso de gasto. No incluye valoración de horas propias, auditoría legal integral ni todos los gastos de explotación. Rango orientativo integral $25.000–80.000; desarrollo tradicional contratado $300.000–1,2 millones o más, sin cotizaciones verificadas. Primera versión útil $1.500–5.000, no totalidad de la guía.
+| Etapa | Incremental | Acumulado | Entrega y evidencia para avanzar |
+|---|---:|---:|---|
+| Seller Zero | $1.500 | $1.500 | Workspace, CRM, catálogo, pedidos y pagos; fundador completa ventas reales y conciliación |
+| Comunicación y publicidad | $2.000 | $3.500 | Meta Ads, WhatsApp, inbox, Direct Call; permisos oficiales, atribución y costo medido |
+| Red comercial | $2.500 | $6.000 | Registro, mini tiendas, perfiles, permisos; piloto hasta 10 vendedores con aislamiento |
+| Economía de oportunidades | $4.000 | $10.000 | Marketplace, comisiones, Exchange, Recovery, propuestas; claims y liquidaciones sin duplicados |
+| Inteligencia comercial | $5.000 | $15.000 | Grabaciones consentidas, DNA, Ghost, Firewall, capital; calidad y costo comprobados |
+| Universidad | $4.000 | $19.000 | Academia, profesores, becas, simulaciones, recuperación; dominio y recuperación medibles |
+| Comunidad y legado | $3.000 | $22.000 | Mentores, linajes, grupos, trofeos; permisos, integridad y participación voluntaria |
+| Consolidación | $8.000 | $30.000 | Auditorías, optimización, carga, recuperación ante fallos y seguridad avanzada |
+Seguridad, pruebas, privacidad y contabilidad desde la primera etapa. La última etapa profundiza, no sustituye controles previos. El orden expresa dependencias y liberación de capital, no exige aprobaciones repetitivas por cada módulo durante una misión autorizada. No contratar ni gastar sin autorización. Auditar código existente, créditos y dependencias antes de fijar presupuesto contractual. Registrar presupuesto previsto, comprometido, consumido, desviación, evidencia de utilidad y decisión de continuar.
+
+## 63. Economía de operación, escalabilidad y financiación
+Circuito: publicidad → oportunidades → vendedores → ventas/contribución → capital → formación y recuperación → talento → mayor productividad. No asumir causalidad ni crecimiento garantizado.
+Modelo de consumo ilustrativo: 30 videollamadas mensuales por vendedor activo, 15 minutos, dos participantes, grabación consentida y transcripción posterior; $3 adicionales de IA por activo. Parámetros presupuestarios por minuto de sesión: video $0,004, grabación $0,010, transcripción $0,003; almacenamiento supuesto 0,0075 GB/min a $0,015/GB-mes. No tarifas contractuales verificadas en esta actualización. Ejemplo 15 min con análisis adicional $0,05 ≈ $0,31. Excluye IA multimodal continua, telefonía tradicional, WhatsApp de pago, personal, publicidad, mercancía, procesamiento de pagos y otros gastos.
+| Activos | Tecnología mensual orientativa |
+|---:|---:|
+| 1 | $50–150 |
+| 10 | $150–250 |
+| 100 | $1.200–1.600 |
+| 1.000 | $11.000–15.000 |
+| 10.000 | $110.000–145.000 |
+| 50.000 | $535.000–650.000 |
+No confundir activos mensuales con registrados o concurrentes. Rangos no son pruebas de capacidad; ajustar infraestructura central, retención, tráfico, picos, soporte y tarifas. Priorizar audio, grabación selectiva consentida, análisis posterior y plantillas. Objetivo tecnológico ≤5% de contribución comercial antes de tecnología, excepción inicial documentada. Ejemplo 1.000 activos × 5 ventas × $80 = $400.000 de contribución antes de tecnología; $13.000 tecnología (3,25%), $387.000 restantes antes de otros gastos e impuestos.
+Autofinanciación: presupuesto mensual de desarrollo = contribución de caja disponible por venta × ventas diarias × días efectivos × fracción reinvertida. Con $80, 5 ventas/día, 30 días y 30%: $3.600/mes; $30.000 / $3.600 = 8,33 meses de financiación, no plazo de construcción. Mes de financiación de cada etapa = redondeo hacia arriba de acumulado / presupuesto mensual. Usar caja efectivamente disponible después de obligaciones, reservas, devoluciones y gastos; no reinvertir ingresos brutos ni duplicar costos. Si presupuesto disponible es cero, no hay plazo finito. Panel CEO permite cambiar supuestos, ver escenario conservador/base/alto, presupuesto y avance; no ejecutar gastos automáticamente.
+Aclaración de estimaciones previas: la suma de partidas detalladas de desarrollo es $26.000–73.500; el roadmap $30.000 es un escenario objetivo dentro de ese rango, no garantía de alcance ni precio fijo.
+
+## 64. Mapa organizativo y principios de ejecución
+KELO GROUP como concepto de dirección, capital y propiedad intelectual; divisiones operativas KELO Diamonds (joyería), KELO Technologies (software), KELO Sales Network (red comercial), KELO University (formación), KELO Capital (presupuesto comercial interno), KELO Community (comunidad y legado). No implica seis sociedades constituidas ni actividad financiera regulada autorizada. Revisar estructura jurídica cuando el crecimiento lo justifique.
+Principio: construir para uno, diseñar para 500.000 registrados, escalar según beneficios y pruebas. No servidores por vendedor, no apps duplicadas, no IA para reglas deterministas, no generación multimedia por cada trofeo/propuesta, no capacidad sobredimensionada. Reutilizar catálogo, identidad, eventos, permisos, ledger y plantillas. Objetivos de capacidad de capítulos 42–43 siguen sujetos a pruebas.
+
+## 65. Registro de continuidad
+- 2026-11-26 — Incorporados mapa maestro de siete capas, dependencias Mermaid, roadmap de ocho etapas y presupuesto objetivo $30.000, costos de operación, fórmula de autofinanciación y mapa organizativo. Estimaciones no auditadas ni cotizadas; se conserva contenido anterior. No cambios de código, despliegue ni gasto.
